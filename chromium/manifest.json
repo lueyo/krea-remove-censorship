@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Kreauncen Extension",
+  "version": "0.1",
+  "description": "Removes nsfw block in krea realtime.",
+  "author": "lueyo",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "host_permissions": [
+    "https://www.krea.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.krea.ai/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+    }
+  }
+}

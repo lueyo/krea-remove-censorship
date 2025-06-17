@@ -1,0 +1,61 @@
+name: Build and Release Extensions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install web-ext
+        run: npm install -g web-ext
+
+      - name: Validate and build Firefox extension
+        run: |
+          cd firefox
+          web-ext lint --warnings-as-errors
+          web-ext build --overwrite-dest --artifacts-dir ../dist
+        continue-on-error: false
+
+      - name: Validate Chromium manifest
+        run: |
+          cd chromium
+          jq '.' manifest.json
+        continue-on-error: false
+
+      - name: Package Chromium extension
+        run: |
+          cd chromium
+          zip -r ../dist/kreaUncensuredChromium.zip .
+        continue-on-error: false
+
+      - name: Rename Firefox artifact
+        run: |
+          mv dist/*.xpi dist/kreaUncensuredFirefox.xpi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kreaUncensuredArtifacts
+          path: dist/*
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/kreaUncensuredFirefox.xpi
+            dist/kreaUncensuredChromium.zip
+          tag_name: ${{ github.sha }}
+          name: Release ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
