@@ -45,11 +45,11 @@ jobs:
       - name: Rename Firefox artifact
         run: |
           shopt -s nullglob
-          files=(dist/*.xpi)
+          files=(dist/*.zip)
           if [ ${#files[@]} -gt 0 ]; then
-            mv dist/*.xpi dist/kreaUncensuredFirefox.xpi
+            mv "${files[0]}" dist/kreaUncensuredFirefox.xpi
           else
-            echo "No .xpi file found to rename."
+            echo "No .zip file found to rename."
           fi
 
       - name: Upload artifacts
