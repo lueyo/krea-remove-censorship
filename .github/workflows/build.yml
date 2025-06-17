@@ -41,7 +41,13 @@ jobs:
 
       - name: Rename Firefox artifact
         run: |
-          mv dist/*.xpi dist/kreaUncensuredFirefox.xpi
+          shopt -s nullglob
+          files=(dist/*.xpi)
+          if [ ${#files[@]} -gt 0 ]; then
+            mv dist/*.xpi dist/kreaUncensuredFirefox.xpi
+          else
+            echo "No .xpi file found to rename."
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
