@@ -64,4 +64,4 @@ jobs:
           tag_name: ${{ github.sha }}
           name: Release ${{ github.sha }}
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
