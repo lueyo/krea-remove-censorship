@@ -30,6 +30,16 @@ jobs:
           web-ext build --overwrite-dest --artifacts-dir ../dist
         continue-on-error: false
 
+      - name: Rename Firefox artifact to .zip
+        run: |
+          shopt -s nullglob
+          files=(dist/*.zip)
+          if [ ${#files[@]} -gt 0 ]; then
+            mv "${files[0]}" dist/kreaUncensuredFirefox.zip
+          else
+            echo "No .zip file found to rename."
+          fi
+
       - name: Validate Chromium manifest
         run: |
           cd chromium
@@ -41,16 +51,6 @@ jobs:
           cd chromium
           zip -r ../dist/kreaUncensuredChromium.zip .
         continue-on-error: false
-
-      - name: Rename Firefox artifact
-        run: |
-          shopt -s nullglob
-          files=(dist/*.zip)
-          if [ ${#files[@]} -gt 0 ]; then
-            mv "${files[0]}" dist/kreaUncensuredFirefox.xpi
-          else
-            echo "No .zip file found to rename."
-          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -69,7 +69,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/kreaUncensuredFirefox.xpi
+            dist/kreaUncensuredFirefox.zip
             dist/kreaUncensuredChromium.zip
           tag_name: auto-v${{ github.run_number }}
           name: Release auto-v${{ github.run_number }}
